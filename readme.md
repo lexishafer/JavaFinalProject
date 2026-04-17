@@ -20,13 +20,13 @@ Ghosts use different movement patterns:
 - Proximity-based: becomes aggressive when the player is nearby
 
 ### Power Pellets
-- Temporarily reverse ghost behavior
+- Temporarily reverse ghost behavior (10 seconds)
 - Allow the player to eat ghosts for points
 
 ### Power-Ups
-- 2x speed boost
-- Invisibility to ghosts
-- Force all ghosts into aggressive mode
+- 2x speed boost (5 seconds)
+- Invisibility to ghosts (10 seconds)
+- Force all ghosts into aggressive mode (10 seconds)
 - Random teleport within the maze
 
 ### Character Selection
@@ -38,4 +38,4 @@ Ghosts use different movement patterns:
 The project uses:
 - Polymorphism for game entities
 - Strategy-based ghost movement behavior
-- State changes for power-ups and ghost vulnerability
+- State changes for power-ups and ghost behavior
