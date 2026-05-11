@@ -1,7 +1,6 @@
-public enum GameState {
+public enum GameState{
     MENU,
     CHARACTER_SELECT,
     PLAYING,
-    GAME_OVER,
-    WIN
+    GAME_OVER
 }

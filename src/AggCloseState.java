@@ -1,9 +1,14 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class AggressiveState implements GhostState{
+public class AggCloseState implements GhostState{
+    private double aggDistance;
     private final Random random = new Random();
     private static final long CHANGE_INTERVAL = 400;
+
+    public AggCloseState(double aggDistance){
+        this.aggDistance = aggDistance;
+    }
 
     @Override
     public void update(Ghost ghost, ArrayList<Sprite> env, Sprite pacman){
@@ -25,20 +30,38 @@ public class AggressiveState implements GhostState{
             return;
         }
 
-        double dx = pacman.getX() - ghost.getX();
-        double dy = pacman.getY() - ghost.getY();
-        if(Math.abs(dx) > Math.abs(dy)){
-            if(dx>0){
-                ghost.setDirection(Direction.EAST);
+        double distance = Math.hypot(pacman.getX() - ghost.getX(), pacman.getY() - ghost.getY());
+        if(distance < aggDistance){
+            double dx = pacman.getX() - ghost.getX();
+            double dy = pacman.getY() - ghost.getY();
+            if(Math.abs(dx) > Math.abs(dy)){
+                if(dx>0){
+                    ghost.setDirection(Direction.EAST);
+                } else{
+                    ghost.setDirection(Direction.WEST);
+                }
             } else{
-                ghost.setDirection(Direction.WEST);
+                if(dy>0){
+                    ghost.setDirection(Direction.SOUTH);
+                } else{
+                    ghost.setDirection(Direction.NORTH);
+                }
             }
         } else{
-            if(dy>0){
-                ghost.setDirection(Direction.SOUTH);
-            } else{
-                ghost.setDirection(Direction.NORTH);
+            long now = System.currentTimeMillis();
+            if(!ghost.canMove(env)){
+                setRandomValidDirection(ghost, env);
+                ghost.setLastDirectionChange(now);
+                return;
             }
+            if(now - ghost.getLastDirectionChange() < CHANGE_INTERVAL){
+                return;
+            }
+            if(random.nextDouble() < 0.7){
+                return;
+            }
+            setRandomValidDirection(ghost, env);
+            ghost.setLastDirectionChange(now);
         }
     }
 

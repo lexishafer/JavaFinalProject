@@ -2,19 +2,19 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-public class DynamicSprite extends SolidSprite {
+public class DynamicSprite extends SolidSprite{
     private boolean isWalking = true;
     protected double speed = 5;
     protected int spriteSheetNumberOfColumn = 4;
     private int timeBetweenFrame = 300;
     private Direction direction = Direction.SOUTH;
 
-    DynamicSprite(Image image, Double x, Double y, Double width, Double height) {
+    DynamicSprite(Image image, Double x, Double y, Double width, Double height){
         super(image,x,y,width,height);
     }
 
     //direction setting method, used with key read
-    public void setDirection(Direction direction) {
+    public void setDirection(Direction direction){
         this.direction = direction;
     }
 
@@ -28,8 +28,8 @@ public class DynamicSprite extends SolidSprite {
     }
 
     //set a new position based on the direction and speed of the hero
-    protected void move() {
-        switch (direction) {
+    protected void move(){
+        switch (direction){
             case NORTH:
                 setY(getY() - speed);
                 break;
@@ -50,7 +50,7 @@ public class DynamicSprite extends SolidSprite {
         double xNew = getX();
         double yNew = getY();
 
-        switch (direction) {
+        switch (direction){
             case NORTH:
                 yNew -= speed;
                 break;
@@ -67,11 +67,11 @@ public class DynamicSprite extends SolidSprite {
 
         Rectangle2D.Double hitBox = new Rectangle2D.Double(xNew, yNew, super.getWidth(), super.getHeight());
 
-        for (Sprite sprite : environment) {
-            if (sprite instanceof SolidSprite && sprite != this) {
+        for(Sprite sprite : environment){
+            if(sprite instanceof SolidSprite && !(sprite instanceof Ghost) && sprite != this){
                 Rectangle2D.Double otherHitBox = new Rectangle2D.Double(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
 
-                if (hitBox.intersects(otherHitBox)) {
+                if(hitBox.intersects(otherHitBox)){
                     return false;
                 }
             }
@@ -80,25 +80,25 @@ public class DynamicSprite extends SolidSprite {
     }
 
     //move the sprite if you can
-    public void moveIfPossible(ArrayList<Sprite> environment) {
-        if (isMovingPossible(environment)) {
+    public void moveIfPossible(ArrayList<Sprite> environment){
+        if(isMovingPossible(environment)){
             move();
         }
     }
 
-    public double getSpeed() {
+    public double getSpeed(){
         return speed;
     }
 
-    public void setSpeed(double speed) {
+    public void setSpeed(double speed){
         this.speed = speed;
     }
 
-    public boolean canMove(ArrayList<Sprite> environment) {
+    public boolean canMove(ArrayList<Sprite> environment){
         return isMovingPossible(environment);
     }
 
-    public Direction getDirection() {
+    public Direction getDirection(){
         return this.direction;
     }
 }

@@ -10,12 +10,13 @@ public class Pacman extends DynamicSprite{
     private boolean speedBoosted;
     private long speedBoostEndTime;
     private String characterType;
-    private final double normalSpeed = 5.0;
-    private final double boostedSpeed = 10.0;
+    private final double normalSpeed = 3.0;
+    private final double boostedSpeed = 6.0;
+    private boolean immune;
+    private long immuneEndTime;
 
-    public Pacman(Image image, Double x, Double y, Double width, Double height, String characterType) {
+    public Pacman(Image image, Double x, Double y, Double width, Double height, String characterType){
         super(image, x, y, width, height);
-
         this.score = 0;
         this.lives = 3;
         this.poweredUp = false;
@@ -24,98 +25,106 @@ public class Pacman extends DynamicSprite{
         this.characterType = characterType;
     }
 
-    public int getScore() {
+    public int getScore(){
         return score;
     }
 
-    public void addScore(int points) {
+    public void addScore(int points){
         score += points;
     }
 
-    public void resetScore() {
+    public void resetScore(){
         score = 0;
     }
 
-    public int getLives() {
+    public int getLives(){
         return lives;
     }
 
-    public void loseLife() {
+    public void loseLife(){
         lives--;
     }
 
-    public void gainLife() {
+    public void gainLife(){
         lives++;
     }
 
-    public boolean isDead() {
+    public boolean isDead(){
         return (lives <= 0);
     }
 
-    public void activatePowerMode(long durationMillis) {
+    public void activatePowerMode(long durationMillis){
         poweredUp = true;
         powerModeEndTime = System.currentTimeMillis() + durationMillis;
     }
 
-    public boolean isPoweredUp() {
+    public boolean isPoweredUp(){
         return poweredUp;
     }
 
-    public void activateInvisibility(long durationMillis) {
+    public void activateInvisibility(long durationMillis){
         invisible = true;
         invisibleEndTime = System.currentTimeMillis() + durationMillis;
     }
 
-    public boolean isInvisible() {
+    public boolean isInvisible(){
         return invisible;
     }
 
-    public void activateSpeedBoost(long durationMillis) {
+    public void activateSpeedBoost(long durationMillis){
         speedBoosted = true;
         speedBoostEndTime = System.currentTimeMillis() + durationMillis;
         setSpeed(boostedSpeed);
     }
 
-    public boolean isSpeedBoosted() {
+    public boolean isSpeedBoosted(){
         return speedBoosted;
     }
 
-    public String getCharacterType() {
+    public String getCharacterType(){
         return characterType;
     }
 
-    public void setCharacterType(String characterType) {
+    public void setCharacterType(String characterType){
         this.characterType = characterType;
     }
 
-    public void updatePowerTimers() {
+    public void updatePowerTimers(){
         long currentTime = System.currentTimeMillis();
-
-        if (poweredUp && currentTime > powerModeEndTime) {
+        if(poweredUp && currentTime > powerModeEndTime){
             poweredUp = false;
         }
-
-        if (invisible && currentTime > invisibleEndTime) {
+        if(invisible && currentTime > invisibleEndTime){
             invisible = false;
         }
-
-        if (speedBoosted && currentTime > speedBoostEndTime) {
+        if(speedBoosted && currentTime > speedBoostEndTime){
             speedBoosted = false;
             setSpeed(normalSpeed);
         }
+        if(immune && currentTime > immuneEndTime){
+            immune = false;
+        }
     }
 
-    public void resetPowerStates() {
+    public void resetPowerStates(){
         poweredUp = false;
         invisible = false;
         speedBoosted = false;
         setSpeed(normalSpeed);
     }
 
-    public void resetForNewGame() {
+    public void resetForNewGame(){
         score = 0;
         lives = 3;
         resetPowerStates();
     }
 
+    public void activateImmunity(long durationMillis){
+        immune = true;
+        immuneEndTime = System.currentTimeMillis() + durationMillis;
+    }
+
+    public boolean isImmune(){
+        return immune;
+    }
 }

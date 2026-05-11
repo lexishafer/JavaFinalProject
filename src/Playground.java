@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Playground {
+public class Playground{
     private ArrayList<Sprite> environment = new ArrayList<>();
     private List<Pellet> pellets;
     private List<Ghost> ghosts;
@@ -20,51 +20,49 @@ public class Playground {
     private double ghostSpawnX;
     private double ghostSpawnY;
 
-    public Playground(String pathName, List<Pellet> pellets, List<Ghost> ghosts, Pacman pacman) {
+    public Playground(String pathName, List<Pellet> pellets, List<Ghost> ghosts, Pacman pacman){
         this.pellets = pellets;
         this.ghosts = ghosts;
         this.pacman = pacman;
 
-        try {
+        try{
             final Image imageWall = ImageIO.read(new File("assets/img/wall.png"));
             final Image imageFloor = ImageIO.read(new File("assets/img/floor.png"));
             final Image imagePellet = ImageIO.read(new File("assets/img/pellet.png"));
             final Image imagePower = ImageIO.read(new File("assets/img/powerpellet.png"));
+            final Image imageSpeed = ImageIO.read(new File("assets/img/speed.png"));
+            final Image imageInvis = ImageIO.read(new File("assets/img/invisible.png"));
+            final Image imageAnger = ImageIO.read(new File("assets/img/angryghosts.png"));
+            final Image imageTeleport = ImageIO.read(new File("assets/img/teleport.png"));
 
             tileWidth = imageFloor.getWidth(null);
             tileHeight = imageFloor.getHeight(null);
 
-
             BufferedReader bufferedReader = new BufferedReader(new FileReader("assets/level/level.txt"));
-
             String line;
             int row = 0;
             int ghostCount = 0;
-            while ((line = bufferedReader.readLine()) != null) {
+            while((line = bufferedReader.readLine()) != null){
 
-                for (int col = 0; col < line.length(); col++) {
+                for(int col = 0; col < line.length(); col++){
                     char element = line.charAt(col);
                     double x = col * tileWidth;
                     double y = row * tileHeight;
-                    switch (element) {
+                    switch(element){
                         case '#':
-                            environment.add(new SolidSprite(
-                                    imageWall, x, y, tileWidth, tileHeight
-                            ));
+                            environment.add(new SolidSprite(imageWall, x, y, tileWidth, tileHeight));
                             break;
                         case ' ':
-                            environment.add(new Sprite(
-                                    imageFloor, x, y, tileWidth, tileHeight
-                            ));
+                            environment.add(new Sprite(imageFloor, x, y, tileWidth, tileHeight));
                             break;
                         case '.':
-                            Pellet p = new Pellet(imagePellet, x, y, tileWidth, tileHeight);
+                            Pellet p = new Pellet(imagePellet, imageFloor, x, y, tileWidth, tileHeight);
                             pellets.add(p);
                             environment.add(p);
                             break;
 
                         case 'o':
-                            PowerPellet pp = new PowerPellet(imagePower, x, y, tileWidth, tileHeight);
+                            PowerPellet pp = new PowerPellet(imagePower, imageFloor, x, y, tileWidth, tileHeight);
                             pellets.add(pp);
                             environment.add(pp);
                             break;
@@ -80,21 +78,21 @@ public class Playground {
                             if(ghostCount==0){
                                 ghostSpawnX = x;
                                 ghostSpawnY = y;
-                                Ghost g = new Ghost(ImageIO.read(new File("assets/img/grgh.png")), x, y, tileWidth, tileHeight);
+                                Ghost g = new Ghost(ImageIO.read(new File("assets/img/grgh.png")), x, y, tileWidth, tileHeight, new AggCloseState(150));
                                 ghostCount++;
                                 ghosts.add(g);
                                 environment.add(g);
                                 break;
                             }
                             else if(ghostCount==1){
-                                Ghost g = new Ghost(ImageIO.read(new File("assets/img/regh.png")), x, y, tileWidth, tileHeight);
+                                Ghost g = new Ghost(ImageIO.read(new File("assets/img/regh.png")), x, y, tileWidth, tileHeight, new AggressiveState());
                                 ghostCount++;
                                 ghosts.add(g);
                                 environment.add(g);
                                 break;
                             }
                             else if(ghostCount==2){
-                                Ghost g = new Ghost(ImageIO.read(new File("assets/img/blgh.png")), x, y, tileWidth, tileHeight);
+                                Ghost g = new Ghost(ImageIO.read(new File("assets/img/blgh.png")), x, y, tileWidth, tileHeight, new RandomState());
                                 ghostCount++;
                                 ghosts.add(g);
                                 environment.add(g);
@@ -102,58 +100,99 @@ public class Playground {
                             } else{
                                 break;
                             }
+                        case 's':
+                            SpeedUp sp = new SpeedUp(imageSpeed, imageFloor, x, y, tileWidth, tileHeight);
+                            pellets.add(sp);
+                            environment.add(sp);
+                            break;
+
+                        case 'i':
+                            Invisibility ip = new Invisibility(imageInvis, imageFloor, x, y, tileWidth, tileHeight);
+                            pellets.add(ip);
+                            environment.add(ip);
+                            break;
+
+                        case 'a':
+                            AngryGhosts ap = new AngryGhosts(imageAnger, imageFloor, x, y, tileWidth, tileHeight);
+                            pellets.add(ap);
+                            environment.add(ap);
+                            break;
+
+                        case 't':
+                            Teleport tp = new Teleport(imageTeleport, imageFloor, x, y, tileWidth, tileHeight);
+                            pellets.add(tp);
+                            environment.add(tp);
+                            break;
 
                         default:
-                            environment.add(new Sprite(
-                                    imageFloor, x, y, tileWidth, tileHeight
-                            ));
+                            environment.add(new Sprite(imageFloor, x, y, tileWidth, tileHeight));
                             break;
                     }
                 }
                 row++;
             }
 
-        } catch (Exception e) {
+        } catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void setPelletList(List<Pellet> pellets) {
+    public void setPelletList(List<Pellet> pellets){
         this.pellets = pellets;
     }
 
-    public void setGhostList(List<Ghost> ghosts) {
+    public void setGhostList(List<Ghost> ghosts){
         this.ghosts = ghosts;
     }
 
-    public void setPacman(Pacman pacman) {
+    public void setPacman(Pacman pacman){
         this.pacman = pacman;
     }
 
 
-    public ArrayList<Sprite> getSolidSpriteList() {
+    public ArrayList<Sprite> getSolidSpriteList(){
         ArrayList<Sprite> solids = new ArrayList<>();
-        for (Sprite sprite : environment) {
-            if (sprite instanceof SolidSprite) {
+        for(Sprite sprite : environment){
+            if(sprite instanceof SolidSprite){
                 solids.add(sprite);
             }
         }
         return solids;
     }
 
-    public ArrayList<Displayable> getSpriteList() {
+    public ArrayList<Displayable> getSpriteList(){
         ArrayList<Displayable> list = new ArrayList<>();
         list.addAll(environment);
         return list;
     }
 
-    public ArrayList<Sprite> getAllSprites() {
+    public ArrayList<Sprite> getAllSprites(){
         return environment;
     }
 
-    public double getPacmanSpawnX() { return pacmanSpawnX; }
-    public double getPacmanSpawnY() { return pacmanSpawnY; }
+    public ArrayList<Sprite> getWalkableTiles(){
+        ArrayList<Sprite> walkable = new ArrayList<>();
+        for(Sprite s : environment){
+            if(!(s instanceof SolidSprite)){
+                walkable.add(s);
+            }
+        }
+        return walkable;
+    }
 
-    public double getGhostSpawnX() { return ghostSpawnX; }
-    public double getGhostSpawnY() { return ghostSpawnY; }
+    public double getPacmanSpawnX(){
+        return pacmanSpawnX;
+    }
+
+    public double getPacmanSpawnY(){
+        return pacmanSpawnY;
+    }
+
+    public double getGhostSpawnX(){
+        return ghostSpawnX;
+    }
+
+    public double getGhostSpawnY(){
+        return ghostSpawnY;
+    }
 }
