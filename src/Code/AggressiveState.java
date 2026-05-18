@@ -29,18 +29,50 @@ public class AggressiveState implements GhostState{
 
         double dx = pacman.getX() - ghost.getX();
         double dy = pacman.getY() - ghost.getY();
+        ArrayList<Direction> prioritized = new ArrayList<>();
+
         if(Math.abs(dx) > Math.abs(dy)){
-            if(dx>0){
-                ghost.setDirection(Direction.EAST);
+            if(dx > 0){
+                prioritized.add(Direction.EAST);
             } else{
-                ghost.setDirection(Direction.WEST);
+                prioritized.add(Direction.WEST);
+            }
+            if(dy > 0){
+                prioritized.add(Direction.SOUTH);
+            } else{
+                prioritized.add(Direction.NORTH);
             }
         } else{
-            if(dy>0){
-                ghost.setDirection(Direction.SOUTH);
+            if(dy > 0){
+                prioritized.add(Direction.SOUTH);
             } else{
-                ghost.setDirection(Direction.NORTH);
+                prioritized.add(Direction.NORTH);
             }
+            if(dx > 0){
+                prioritized.add(Direction.EAST);
+            } else{
+                prioritized.add(Direction.WEST);
+            }
+        }
+        for(Direction d : Direction.values()){
+            if(!prioritized.contains(d)){
+                prioritized.add(d);
+            }
+        }
+        Direction opposite = getOpposite(ghost.getDirection());
+
+        for(Direction dir : prioritized){
+            if (dir == opposite) {
+                continue;
+            }
+            ghost.setDirection(dir);
+            if(ghost.canMove(env)){
+                return;
+            }
+        }
+        ghost.setDirection(opposite);
+        if (ghost.canMove(env)) {
+            return;
         }
     }
 
